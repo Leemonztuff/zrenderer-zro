@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources # Put your RO data here
+    restart: unless-stopped
+
+  # Example of your RPG Game backend/frontend
+  game-app:
+    image: node:20
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - ZRENDERER_URL=http://zrenderer:11011
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    depends_on:
+      - zrenderer
+    command: npm start
