@@ -1,0 +1,10 @@
+{
+  "name": "@zrenderer/node-client",
+  "version": "1.0.0",
+  "description": "Node.js client for zrenderer",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  }
+}
