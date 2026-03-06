@@ -184,6 +184,9 @@ Run `dub build --compiler=ldc2 :server`.
 Release build:  
 Run `dub build --compiler=ldc2 --build=release :server`.
 
+## Integration for RPG Games
+If you're looking to integrate `zrenderer` into a modern web stack (React, Node.js, Supabase, Three.js), check the [Integration Guide](integration/README.md).
+
 To add outlines to the sprites boxes for debugging purposes add `--debug=outline` to the build command:  
 `dub build --compiler=ldc2 --debug=outline :cli`
 
