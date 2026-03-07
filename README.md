@@ -196,6 +196,9 @@ which will be available when installing the Build Tools for Visual Studio (see a
 
 Depending on your system the command prompt will be available for x86 and x64. Whichever you choose will build zrenderer for the same architecture.
 
+## Integration for RPG Games
+Integration tools for modern web stacks (React, Node.js, Supabase, Three.js) are available in the [integration/](integration/) directory.
+
 ---
 All Ragnarok Online related media and content are copyrighted © by Gravity Co., Ltd & Lee Myoungjin(studio DTDS) and have all rights reserved.
 
