@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources
+    restart: unless-stopped
+
+  # Template for your RPG game application (React/Node/Supabase)
+  # game-app:
+  #   build: ./game-app
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - RENDERER_URL=http://zrenderer:11011
+  #     - SUPABASE_URL=${SUPABASE_URL}
+  #     - SUPABASE_KEY=${SUPABASE_ANON_KEY}
+  #   depends_on:
+  #     - zrenderer
