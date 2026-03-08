@@ -190,6 +190,14 @@ To add outlines to the sprites boxes for debugging purposes add `--debug=outline
 Example output:  
 ![Clown](examples/4075_0.png)
 
+## Integration for RPG Games
+If you are building an RPG game using modern technologies like React, Node.js, Supabase, and Three.js, check out the [integration/](integration/) directory. It provides:
+- A Node.js client for automated rendering and storage management.
+- A React Three.js component (`ROSpriteBillboard`) for easy sprite display.
+- Database schemas for character and equipment management.
+
+See [integration/README.md](integration/README.md) for more details.
+
 ### Extra step for Windows:
 The above commands must be executed in the [Visual Studio Developer Command Prompt](https://docs.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell)
 which will be available when installing the Build Tools for Visual Studio (see above).
