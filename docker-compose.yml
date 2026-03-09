@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    image: zhade/zrenderer:latest
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources
+    restart: always
+
+  # Template for your game application
+  # game-app:
+  #   build: ./my-game-app
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - RENDERER_URL=http://zrenderer:11011
+  #     - SUPABASE_URL=${SUPABASE_URL}
+  #     - SUPABASE_KEY=${SUPABASE_KEY}
+  #   depends_on:
+  #     - zrenderer
