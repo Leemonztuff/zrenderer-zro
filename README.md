@@ -16,6 +16,7 @@ Tool to render sprites from the game Ragnarok Online. This tool is available as 
   * [CLI](#cli-1)
   * [Server](#server-1)
   * [Extra step for Windows](#extra-step-for-windows)
+* [Integration for RPG Games](#integration-for-rpg-games)
 
 ## Required Resources
 Please see [RESOURCES.md](https://github.com/zhad3/zrenderer/blob/main/RESOURCES.md).
@@ -183,6 +184,9 @@ Run `dub build --compiler=ldc2 --build=release :cli`.
 Run `dub build --compiler=ldc2 :server`.  
 Release build:  
 Run `dub build --compiler=ldc2 --build=release :server`.
+
+## Integration for RPG Games
+If you are looking to integrate `zrenderer` into a modern web stack (React, Node.js, Supabase, Three.js), please refer to the [Integration Guide](integration/README.md).
 
 To add outlines to the sprites boxes for debugging purposes add `--debug=outline` to the build command:  
 `dub build --compiler=ldc2 --debug=outline :cli`
