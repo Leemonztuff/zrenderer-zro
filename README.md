@@ -16,6 +16,7 @@ Tool to render sprites from the game Ragnarok Online. This tool is available as 
   * [CLI](#cli-1)
   * [Server](#server-1)
   * [Extra step for Windows](#extra-step-for-windows)
+* [Integration for RPG Games](#integration-for-rpg-games)
 
 ## Required Resources
 Please see [RESOURCES.md](https://github.com/zhad3/zrenderer/blob/main/RESOURCES.md).
@@ -195,6 +196,16 @@ The above commands must be executed in the [Visual Studio Developer Command Prom
 which will be available when installing the Build Tools for Visual Studio (see above).
 
 Depending on your system the command prompt will be available for x86 and x64. Whichever you choose will build zrenderer for the same architecture.
+
+## Integration for RPG Games
+If you want to use this renderer in a modern RPG stack (React, Node.js, Supabase, Three.js), we have provided a set of tools in the [integration/](integration/) directory.
+
+These tools include:
+- **Node.js Client**: A client to interact with the renderer and upload sprites to Supabase Storage.
+- **React + Three.js Component**: A billboard component to easily display sprites in a 3D scene.
+- **Supabase Schema**: SQL script to set up a `characters` table with the necessary visual parameters.
+
+Please refer to the [Integration Guide](integration/README.md) for step-by-step instructions.
 
 ---
 All Ragnarok Online related media and content are copyrighted © by Gravity Co., Ltd & Lee Myoungjin(studio DTDS) and have all rights reserved.
