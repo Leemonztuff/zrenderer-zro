@@ -16,6 +16,10 @@ Tool to render sprites from the game Ragnarok Online. This tool is available as 
   * [CLI](#cli-1)
   * [Server](#server-1)
   * [Extra step for Windows](#extra-step-for-windows)
+* [Integration for RPG Games](#integration-for-rpg-games)
+
+## Integration for RPG Games
+Si quieres usar `zrenderer` en tu propio juego (React, Node.js, Supabase, Three.js), echa un vistazo al directorio [integration/](integration/). Allí encontrarás un cliente de Node.js, un componente React para Three.js y el esquema SQL necesario.
 
 ## Required Resources
 Please see [RESOURCES.md](https://github.com/zhad3/zrenderer/blob/main/RESOURCES.md).
