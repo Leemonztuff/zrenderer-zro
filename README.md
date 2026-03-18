@@ -129,6 +129,15 @@ You will need to provide three directory/files:
 - The output directory where the server will store the images
 - The resource directory where all the assets from Ragnarok Online reside in
 
+## Integration for RPG Games
+An integration toolkit for modern RPG development (React, Node.js, Supabase, Three.js) is available in the `integration/` directory.
+
+Check the [Integration Guide](integration/README.md) (en Español) for:
+- **Node.js Client:** Wrapper for the zrenderer API.
+- **React + Three.js Component:** Billboard sprite rendering for 3D scenes.
+- **Supabase Schema:** Database structure for character visual parameters.
+- **Docker Compose:** Ready-to-use microservice configuration.
+
 ## Dependencies when building
 When building for the first time libpng and lua5.1 will be compiled which require a c-compiler.
 
