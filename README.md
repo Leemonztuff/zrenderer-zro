@@ -196,6 +196,16 @@ which will be available when installing the Build Tools for Visual Studio (see a
 
 Depending on your system the command prompt will be available for x86 and x64. Whichever you choose will build zrenderer for the same architecture.
 
+## Integración para Juegos RPG
+Si estás buscando integrar `zrenderer` en un juego de RPG táctico utilizando un stack moderno (**React**, **Node.js**, **Supabase** y **Three.js**), hemos preparado una serie de herramientas y guías en la carpeta `integration/`.
+
+Incluye:
+- **Cliente Node.js**: Facilita la comunicación con la API y la persistencia en Supabase Storage.
+- **Componente React Three Fiber**: Para renderizar los sprites directamente en escenas 3D.
+- **Esquema de Base de Datos**: Tablas preconfiguradas para gestionar personajes.
+
+Consulta la [Guía de Integración](integration/README.md) para más detalles.
+
 ---
 All Ragnarok Online related media and content are copyrighted © by Gravity Co., Ltd & Lee Myoungjin(studio DTDS) and have all rights reserved.
 
