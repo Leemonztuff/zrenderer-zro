@@ -1,0 +1,15 @@
+{
+  "name": "zrenderer-integration",
+  "version": "1.0.0",
+  "description": "Integration tools for zrenderer with React, Node.js, Supabase, and Three.js",
+  "main": "node-client/zrenderer-client.js",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "three": "^0.158.0",
+    "@react-three/fiber": "^8.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "author": "zhad3",
+  "license": "MIT"
+}
