@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # El servicio de renderizado de sprites de RO
+  zrenderer:
+    image: zhade/zrenderer:latest
+    container_name: zrenderer
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources # Aquí debes poner los assets extraídos del juego
+    ports:
+      - "11011:11011"
+    restart: unless-stopped
+
+  # Placeholder para tu aplicación táctica RPG
+  game-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app # Debes crear tu propio Dockerfile para la app
+    depends_on:
+      - zrenderer
+    environment:
+      - ZRENDERER_URL=http://zrenderer:11011
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
