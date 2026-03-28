@@ -199,3 +199,14 @@ Depending on your system the command prompt will be available for x86 and x64. W
 ---
 All Ragnarok Online related media and content are copyrighted © by Gravity Co., Ltd & Lee Myoungjin(studio DTDS) and have all rights reserved.
 
+
+## Integration for RPG Games
+We provide a set of tools and components to easily integrate `zrenderer` into a modern RPG game stack (React, Node.js, Supabase, and Three.js).
+
+You can find these resources in the [integration/](integration/) directory:
+- **Node.js Client**: A wrapper for the zrenderer API.
+- **React + Three.js Component**: A billboard component to render sprites in a 3D scene.
+- **Supabase Schema**: SQL to persist character visual configurations.
+- **Docker Compose**: A ready-to-use setup to run the renderer alongside your app.
+
+For detailed instructions, see the [Integration Guide](integration/README.md) (disponible en español).

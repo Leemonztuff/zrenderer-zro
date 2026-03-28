@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    container_name: zrenderer
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf:ro
+      - ./output:/zren/output
+      - ./resources:/zren/resources:ro
+    ports:
+      - "11011:11011"
+    restart: unless-stopped
+    # The server automatically generates an admin token on the first run
+    # if it doesn't exist. Check logs: docker logs zrenderer
+
+  # Template for your custom game application
+  game-app:
+    image: node:22-alpine
+    container_name: ro-tactical-rpg
+    working_dir: /app
+    environment:
+      - NODE_ENV=development
+      - ZRENDERER_URL=http://zrenderer:11011
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    volumes:
+      - ./integration/node-client:/app/lib/zrenderer-client
+      - ./:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - zrenderer
+    command: npm start
+
+# Note: Remember to place your RO assets in the 'resources' folder
+# and have a 'zrenderer.docker.conf' file in the project root.
