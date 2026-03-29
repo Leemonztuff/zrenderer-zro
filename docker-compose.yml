@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources
+    restart: always
+
+  # Template for your future tactical RPG app service
+  game-app:
+    image: node:20
+    volumes:
+      - ./game:/app
+    environment:
+      - ZRENDERER_URL=http://zrenderer:11011
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+    depends_on:
+      - zrenderer
