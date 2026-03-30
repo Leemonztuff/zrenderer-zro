@@ -8,6 +8,7 @@ Tool to render sprites from the game Ragnarok Online. This tool is available as 
   * [CLI](#cli)
     * [Example](#example)
   * [Server](#server)
+* [Integration for RPG Games](#integration-for-rpg-games)
 * [Docker](#docker)
 * [Dependencies when building](#dependencies-when-building)
   * [Linux](#linux)
@@ -109,6 +110,16 @@ You can find the openApi specifications here: [OpenAPI specifications](https://g
 
 And documentation here: https://github.com/zhad3/zrenderer/tree/main/server/api-doc.  
 The html can be viewed directly here: https://z0q.neocities.org/ragnarok-online-tools/zrenderer/api/
+
+## Integration for RPG Games
+If you are building an RPG game (e.g., using React, Node.js, Supabase, and Three.js), we provide integration tools and examples in the [integration/](integration/) directory.
+
+These include:
+- A Node.js client for the renderer API.
+- A React Three Fiber component for rendering sprites on billboards.
+- A Supabase SQL schema for character persistence.
+
+See the [Integration README](integration/README.md) for more details.
 
 ## Docker
 You can use the pre-built and published images to run the server.

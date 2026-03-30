@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources
+    restart: always
+
+  # Ejemplo de servicio de aplicación (opcional)
+  # game-app:
+  #   build: ./my-game-app
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - zrenderer
+  #   environment:
+  #     - ZRENDERER_URL=http://zrenderer:11011
