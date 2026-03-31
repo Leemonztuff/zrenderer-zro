@@ -110,6 +110,9 @@ You can find the openApi specifications here: [OpenAPI specifications](https://g
 And documentation here: https://github.com/zhad3/zrenderer/tree/main/server/api-doc.  
 The html can be viewed directly here: https://z0q.neocities.org/ragnarok-online-tools/zrenderer/api/
 
+## Integration for RPG Games
+If you're building an RPG game with React, Node.js, Supabase, and Three.js, check out our [Integration Guide](integration/README.md) and tools in the `integration/` directory.
+
 ## Docker
 You can use the pre-built and published images to run the server.
 
