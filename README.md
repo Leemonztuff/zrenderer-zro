@@ -190,6 +190,14 @@ To add outlines to the sprites boxes for debugging purposes add `--debug=outline
 Example output:  
 ![Clown](examples/4075_0.png)
 
+## Integration for RPG Games
+If you're looking to build an RPG (e.g., tactical, turn-based) using React, Node.js, and Supabase, check out our [Integration Guide](integration/README.md).
+
+We provide:
+- A **Node.js Client** for the zrenderer API.
+- A **React Three Fiber Component** to render sprites as 3D Billboards.
+- A **Supabase Schema** for character management.
+
 ### Extra step for Windows:
 The above commands must be executed in the [Visual Studio Developer Command Prompt](https://docs.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell)
 which will be available when installing the Build Tools for Visual Studio (see above).
