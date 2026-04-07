@@ -9,6 +9,7 @@ Tool to render sprites from the game Ragnarok Online. This tool is available as 
     * [Example](#example)
   * [Server](#server)
 * [Docker](#docker)
+* [Integration for RPG Games](#integration-for-rpg-games)
 * [Dependencies when building](#dependencies-when-building)
   * [Linux](#linux)
   * [Windows](#windows)
@@ -128,6 +129,17 @@ You will need to provide three directory/files:
 - A configuration file (see the example `zrenderer.docker.conf`)
 - The output directory where the server will store the images
 - The resource directory where all the assets from Ragnarok Online reside in
+
+## Integration for RPG Games
+If you want to integrate this renderer into a Tactical RPG stack (React, Node.js, Supabase, Three.js), we have provided a set of tools and a guide in the [integration/](integration/) directory.
+
+It includes:
+- **Node.js Client**: A wrapper to communicate with the renderer API.
+- **React + Three.js Component**: A billboard component to display sprites in a 3D environment.
+- **Supabase Schema**: A ready-to-use SQL schema for character persistence.
+- **Docker Compose**: A template to run the renderer alongside your application.
+
+See the [Integration README](integration/README.md) for more details.
 
 ## Dependencies when building
 When building for the first time libpng and lua5.1 will be compiled which require a c-compiler.
