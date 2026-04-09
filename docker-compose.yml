@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  zrenderer:
+    build: .
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./zrenderer.docker.conf:/zren/zrenderer.conf
+      - ./output:/zren/output
+      - ./resources:/zren/resources
+    restart: always
+
+  # Plantilla para tu aplicación de juego
+  # game-app:
+  #   build: ./path-to-your-game-app
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - ZRENDERER_URL=http://zrenderer:11011
+  #     - SUPABASE_URL=your-supabase-url
+  #     - SUPABASE_KEY=your-supabase-anon-key
+  #   depends_on:
+  #     - zrenderer
