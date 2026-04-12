@@ -1,0 +1,16 @@
+{
+  "name": "ro-rpg-integration",
+  "version": "1.0.0",
+  "description": "Dependencias para la integración de zrenderer con un stack de RPG táctico",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "three": "^0.158.0",
+    "@react-three/fiber": "^8.15.11",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.158.3",
+    "@types/react": "^18.2.37"
+  }
+}
