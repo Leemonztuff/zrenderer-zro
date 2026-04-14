@@ -10,6 +10,17 @@ Para que el renderizador funcione, necesitas extraer los assets de los archivos 
 2. Sigue los filtros indicados en `RESOURCES.md` de la raíz de este repositorio.
 3. Coloca todos los archivos extraídos en una carpeta llamada `resources` en la raíz de este proyecto.
 
+## 🚀 Inicio Rápido (Boilerplate)
+
+Si quieres empezar un proyecto desde cero con todo configurado (Frontend, Backend y conexión al Renderer), te recomendamos usar nuestro template de ejemplo:
+
+```bash
+cd examples/rpg-tactic-template
+# Sigue las instrucciones del README.md en esa carpeta
+```
+
+Este template incluye una escena 3D básica y un servidor proxy ya listos para usar.
+
 ## 2. Configuración con Docker
 
 Hemos incluido un archivo `docker-compose.yml` para facilitar el despliegue.

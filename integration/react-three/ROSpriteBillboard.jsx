@@ -14,7 +14,7 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
     const [texture, setTexture] = useState(null);
     const { scene } = useThree();
 
-    // Re-calculamos la URL cada vez que cambien los parámetros del sprite
+    // Re-calculamos la URL base para el renderizado
     const renderUrl = useMemo(() => {
         return `${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}/render?downloadimage=true`;
     }, [baseUrl]);
@@ -34,10 +34,19 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
 
         const loadSprite = async () => {
             try {
-                // Aseguramos que job sea un array de strings para el backend
+                // Normalizamos los parámetros para cumplir con la API 1.3
+                // Aseguramos que job sea un array de strings y otros parámetros sean números
                 const params = {
                     ...spriteParams,
-                    job: Array.isArray(spriteParams.job) ? spriteParams.job.map(String) : [String(spriteParams.job)]
+                    job: Array.isArray(spriteParams.job) ? spriteParams.job.map(String) : [String(spriteParams.job)],
+                    // Mapeo explícito de parámetros comunes de la v1.3 para asegurar tipos correctos
+                    action: spriteParams.action !== undefined ? Number(spriteParams.action) : 0,
+                    frame: spriteParams.frame !== undefined ? Number(spriteParams.frame) : -1,
+                    gender: spriteParams.gender !== undefined ? Number(spriteParams.gender) : 1,
+                    head: spriteParams.head !== undefined ? Number(spriteParams.head) : 1,
+                    bodyPalette: spriteParams.bodyPalette !== undefined ? Number(spriteParams.bodyPalette) : -1,
+                    headPalette: spriteParams.headPalette !== undefined ? Number(spriteParams.headPalette) : -1,
+                    headdir: spriteParams.headdir !== undefined ? Number(spriteParams.headdir) : 3, // Default 'all'
                 };
 
                 // Hacer el POST para obtener la imagen como blob
