@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS public.characters (
     gender INTEGER NOT NULL DEFAULT 1, -- 1: male, 0: female
     head INTEGER NOT NULL DEFAULT 1,
     outfit INTEGER NOT NULL DEFAULT 0,
+    action INTEGER NOT NULL DEFAULT 0,
+    headdir INTEGER NOT NULL DEFAULT 0,
     headgear INTEGER[] DEFAULT '{}', -- Hasta 3 IDs
     garment INTEGER DEFAULT 0,
     weapon INTEGER DEFAULT 0,
