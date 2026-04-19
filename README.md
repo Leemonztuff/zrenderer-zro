@@ -113,6 +113,27 @@ The html can be viewed directly here: https://z0q.neocities.org/ragnarok-online-
 ## Integration for RPG Games
 If you're building an RPG game with React, Node.js, Supabase, and Three.js, check out our [Integration Guide](integration/README.md) and tools in the `integration/` directory.
 
+### RPG Tactic Template
+We provide a complete boilerplate for a tactical RPG in `examples/rpg-tactic-template`.
+
+**Setup:**
+1. **Resources:** Extract RO assets into the `resources/` folder.
+2. **Renderer:** Start the service with `docker-compose up -d zrenderer`.
+3. **Database:** Initialize Supabase using `integration/supabase/init.sql`.
+4. **Backend:**
+   ```bash
+   cd examples/rpg-tactic-template/server
+   npm install
+   # Set ZRENDERER_TOKEN in index.js from accesstokens.conf
+   npm start
+   ```
+5. **Frontend:**
+   ```bash
+   cd examples/rpg-tactic-template/client
+   npm install
+   npm run dev
+   ```
+
 ## Docker
 You can use the pre-built and published images to run the server.
 
