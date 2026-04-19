@@ -40,7 +40,10 @@ class ZRendererClient {
     async render(renderRequest) {
         const params = {
             ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
+            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)],
+            bodyPalette: renderRequest.bodyPalette !== undefined ? Number(renderRequest.bodyPalette) : undefined,
+            headPalette: renderRequest.headPalette !== undefined ? Number(renderRequest.headPalette) : undefined,
+            headdir: renderRequest.headdir !== undefined ? Number(renderRequest.headdir) : undefined
         };
 
         const response = await fetch(`${this.baseUrl}/render`, {
@@ -70,7 +73,10 @@ class ZRendererClient {
 
         const params = {
             ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
+            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)],
+            bodyPalette: renderRequest.bodyPalette !== undefined ? Number(renderRequest.bodyPalette) : undefined,
+            headPalette: renderRequest.headPalette !== undefined ? Number(renderRequest.headPalette) : undefined,
+            headdir: renderRequest.headdir !== undefined ? Number(renderRequest.headdir) : undefined
         };
 
         const response = await fetch(url, {
