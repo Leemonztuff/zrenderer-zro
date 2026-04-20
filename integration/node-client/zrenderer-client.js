@@ -26,10 +26,27 @@ class ZRendererClient {
         // Opcionalmente podemos añadir parámetros comunes a la query para que la URL sea más descriptiva
         // aunque el renderizador prefiera el cuerpo JSON en el POST.
         if (params.job) queryParams.append('job', Array.isArray(params.job) ? params.job.join(',') : params.job);
-        if (params.action !== undefined) queryParams.append('action', params.action);
-        if (params.gender !== undefined) queryParams.append('gender', params.gender);
+        if (params.action !== undefined) queryParams.append('action', Number(params.action));
+        if (params.gender !== undefined) queryParams.append('gender', Number(params.gender));
 
         return `${this.baseUrl}/render?${queryParams.toString()}`;
+    }
+
+    /**
+     * Normaliza los parámetros de renderizado para el backend.
+     * @param {Object} request - Parámetros de entrada
+     * @returns {Object} - Parámetros normalizados
+     */
+    _normalizeParams(request) {
+        return {
+            ...request,
+            job: Array.isArray(request.job) ? request.job.map(String) : [String(request.job)],
+            action: request.action !== undefined ? Number(request.action) : undefined,
+            gender: request.gender !== undefined ? Number(request.gender) : undefined,
+            head: request.head !== undefined ? Number(request.head) : undefined,
+            bodyPalette: request.bodyPalette !== undefined ? Number(request.bodyPalette) : undefined,
+            headPalette: request.headPalette !== undefined ? Number(request.headPalette) : undefined
+        };
     }
 
     /**
@@ -38,10 +55,7 @@ class ZRendererClient {
      * @returns {Promise<Object>} - RenderResponseData { output: string[] }
      */
     async render(renderRequest) {
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(`${this.baseUrl}/render`, {
             method: 'POST',
@@ -67,11 +81,7 @@ class ZRendererClient {
      */
     async renderImage(renderRequest) {
         const url = this.getRenderUrl(renderRequest);
-
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(url, {
             method: 'POST',
