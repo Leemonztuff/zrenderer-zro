@@ -2,6 +2,8 @@
 
 Esta guía te ayudará a integrar el renderizador de sprites de Ragnarok Online (`zrenderer`) en un juego de RPG táctico utilizando **React**, **Node.js**, **Supabase** y **Three.js**.
 
+> **Tip:** Puedes encontrar un ejemplo completo y funcional en [examples/rpg-tactic-template/](../examples/rpg-tactic-template/).
+
 ## 1. Preparación de Recursos
 
 Para que el renderizador funcione, necesitas extraer los assets de los archivos `.grf` del juego oficial.
