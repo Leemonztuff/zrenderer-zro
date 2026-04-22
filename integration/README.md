@@ -27,6 +27,12 @@ En la carpeta `integration/supabase/` encontrarás `init.sql`. Ejecuta este scri
 
 Esta tabla (`public.characters`) guarda todos los parámetros necesarios para reconstruir visualmente a un personaje (job, head, headgear, etc.).
 
+### Flujo de Datos Recomendado
+1. **Frontend**: Solicita datos del personaje a tu API en Node.js.
+2. **Backend**: Consulta a Supabase los parámetros visuales (e.g., `job: [4012], gender: 0`).
+3. **Backend (Proxy)**: Envía estos parámetros al `zrenderer` y retorna la imagen al frontend.
+4. **Frontend (Three.js)**: Usa `ROSpriteBillboard` para mostrar el sprite en la escena 3D.
+
 ## 4. Integración en el Backend (Node.js)
 
 Usa el cliente `ZRendererClient` en `integration/node-client/zrenderer-client.js` para comunicarte con el renderizador desde tu servidor.
