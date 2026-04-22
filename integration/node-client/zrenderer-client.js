@@ -13,11 +13,28 @@ class ZRendererClient {
     }
 
     /**
+     * Normaliza los parámetros para asegurar tipos correctos para el backend.
+     * @private
+     */
+    _normalizeParams(params) {
+        return {
+            ...params,
+            job: Array.isArray(params.job) ? params.job.map(String) : [String(params.job)],
+            action: params.action !== undefined ? Number(params.action) : 0,
+            gender: params.gender !== undefined ? Number(params.gender) : 1,
+            bodyPalette: params.bodyPalette !== undefined ? Number(params.bodyPalette) : -1,
+            headPalette: params.headPalette !== undefined ? Number(params.headPalette) : -1,
+            headdir: params.headdir !== undefined ? String(params.headdir) : 'all'
+        };
+    }
+
+    /**
      * Obtiene la URL de renderizado para un conjunto de parámetros.
      * @param {Object} params - Parámetros de renderizado (job, head, gender, etc.)
      * @returns {string} - URL completa para el endpoint de renderizado
      */
     getRenderUrl(params) {
+        const normalized = this._normalizeParams(params);
         const queryParams = new URLSearchParams({
             downloadimage: 'true',
             accesstoken: this.accessToken
@@ -25,9 +42,9 @@ class ZRendererClient {
 
         // Opcionalmente podemos añadir parámetros comunes a la query para que la URL sea más descriptiva
         // aunque el renderizador prefiera el cuerpo JSON en el POST.
-        if (params.job) queryParams.append('job', Array.isArray(params.job) ? params.job.join(',') : params.job);
-        if (params.action !== undefined) queryParams.append('action', params.action);
-        if (params.gender !== undefined) queryParams.append('gender', params.gender);
+        if (normalized.job) queryParams.append('job', normalized.job.join(','));
+        if (normalized.action !== undefined) queryParams.append('action', normalized.action);
+        if (normalized.gender !== undefined) queryParams.append('gender', normalized.gender);
 
         return `${this.baseUrl}/render?${queryParams.toString()}`;
     }
@@ -38,10 +55,7 @@ class ZRendererClient {
      * @returns {Promise<Object>} - RenderResponseData { output: string[] }
      */
     async render(renderRequest) {
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(`${this.baseUrl}/render`, {
             method: 'POST',
@@ -66,12 +80,8 @@ class ZRendererClient {
      * @returns {Promise<Buffer>} - Buffer de la imagen PNG
      */
     async renderImage(renderRequest) {
-        const url = this.getRenderUrl(renderRequest);
-
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
+        const url = this.getRenderUrl(params);
 
         const response = await fetch(url, {
             method: 'POST',
