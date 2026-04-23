@@ -82,3 +82,18 @@ Asegúrate de instalar las dependencias necesarias en tu proyecto (ver `integrat
 - `@react-three/fiber`
 - `react`
 - `react-dom`
+
+## 6. RPG Tactic Template
+
+Hemos creado una plantilla completa en `examples/rpg-tactic-template` que muestra cómo orquestar todos estos componentes.
+
+### Servidor (Proxy)
+1. `cd examples/rpg-tactic-template/server`
+2. `npm install express @supabase/supabase-js cors`
+3. Configura tus variables de entorno (`ZRENDERER_URL`, `ZRENDERER_TOKEN`, etc.)
+4. `node index.js`
+
+### Cliente (React)
+1. `cd examples/rpg-tactic-template/client`
+2. `npm install`
+3. `npm run dev`
