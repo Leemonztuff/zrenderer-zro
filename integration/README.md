@@ -74,6 +74,26 @@ function GameScene() {
 }
 ```
 
+## 6. Plantilla de RPG Táctico
+
+Hemos creado una plantilla completa en `examples/rpg-tactic-template` que ya incluye:
+- **Backend**: Node.js con Express y Proxy para el renderizador.
+- **Frontend**: Vite + React + Three.js + @react-three/fiber.
+- **UI Interactiva**: Para probar diferentes trabajos, acciones y equipos.
+
+Para comenzar con la plantilla:
+```bash
+# 1. Instalar y ejecutar el servidor
+cd examples/rpg-tactic-template/server
+npm install
+npm start
+
+# 2. Instalar y ejecutar el cliente (en otra terminal)
+cd examples/rpg-tactic-template/client
+npm install
+npm run dev
+```
+
 ## Dependencias
 
 Asegúrate de instalar las dependencias necesarias en tu proyecto (ver `integration/package.json`):
