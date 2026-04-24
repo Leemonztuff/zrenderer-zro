@@ -33,15 +33,35 @@ class ZRendererClient {
     }
 
     /**
+     * Normaliza los parámetros para asegurar compatibilidad con el backend.
+     * @param {Object} params - Parámetros de entrada.
+     * @returns {Object} - Parámetros normalizados.
+     */
+    _normalizeParams(params) {
+        return {
+            ...params,
+            job: Array.isArray(params.job) ? params.job.map(String) : (params.job ? [String(params.job)] : ['0']),
+            headgear: Array.isArray(params.headgear) ? params.headgear.map(Number) : (params.headgear ? [Number(params.headgear)] : []),
+            action: params.action !== undefined ? Number(params.action) : 0,
+            gender: params.gender !== undefined ? Number(params.gender) : 1,
+            head: params.head !== undefined ? Number(params.head) : 1,
+            bodyPalette: params.bodyPalette !== undefined ? Number(params.bodyPalette) : -1,
+            headPalette: params.headPalette !== undefined ? Number(params.headPalette) : -1,
+            frame: params.frame !== undefined ? Number(params.frame) : -1,
+            outfit: params.outfit !== undefined ? Number(params.outfit) : 0,
+            garment: params.garment !== undefined ? Number(params.garment) : 0,
+            weapon: params.weapon !== undefined ? Number(params.weapon) : 0,
+            shield: params.shield !== undefined ? Number(params.shield) : 0
+        };
+    }
+
+    /**
      * Realiza una petición POST al renderizador para obtener la lista de archivos generados.
      * @param {Object} renderRequest - Objeto RenderRequestData
      * @returns {Promise<Object>} - RenderResponseData { output: string[] }
      */
     async render(renderRequest) {
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(`${this.baseUrl}/render`, {
             method: 'POST',
@@ -67,11 +87,7 @@ class ZRendererClient {
      */
     async renderImage(renderRequest) {
         const url = this.getRenderUrl(renderRequest);
-
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(url, {
             method: 'POST',

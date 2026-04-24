@@ -113,6 +113,8 @@ The html can be viewed directly here: https://z0q.neocities.org/ragnarok-online-
 ## Integration for RPG Games
 If you're building an RPG game with React, Node.js, Supabase, and Three.js, check out our [Integration Guide](integration/README.md) and tools in the `integration/` directory.
 
+We also provide a full-stack [Tactical RPG Template](examples/rpg-tactic-template) to help you get started quickly.
+
 ## Docker
 You can use the pre-built and published images to run the server.
 
