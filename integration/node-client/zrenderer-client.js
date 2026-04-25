@@ -13,6 +13,24 @@ class ZRendererClient {
     }
 
     /**
+     * Normaliza los parámetros para asegurar que coincidan con lo esperado por el backend.
+     * @private
+     */
+    _normalizeParams(params) {
+        return {
+            ...params,
+            job: Array.isArray(params.job) ? params.job.map(String) : [String(params.job)],
+            // Asegurar tipos numéricos para parámetros conocidos
+            action: params.action !== undefined ? Number(params.action) : 0,
+            gender: params.gender !== undefined ? Number(params.gender) : 1,
+            head: params.head !== undefined ? Number(params.head) : 1,
+            bodyPalette: params.bodyPalette !== undefined ? Number(params.bodyPalette) : -1,
+            headPalette: params.headPalette !== undefined ? Number(params.headPalette) : -1,
+            headdir: params.headdir !== undefined ? Number(params.headdir) : 0
+        };
+    }
+
+    /**
      * Obtiene la URL de renderizado para un conjunto de parámetros.
      * @param {Object} params - Parámetros de renderizado (job, head, gender, etc.)
      * @returns {string} - URL completa para el endpoint de renderizado
@@ -23,11 +41,11 @@ class ZRendererClient {
             accesstoken: this.accessToken
         });
 
-        // Opcionalmente podemos añadir parámetros comunes a la query para que la URL sea más descriptiva
-        // aunque el renderizador prefiera el cuerpo JSON en el POST.
-        if (params.job) queryParams.append('job', Array.isArray(params.job) ? params.job.join(',') : params.job);
-        if (params.action !== undefined) queryParams.append('action', params.action);
-        if (params.gender !== undefined) queryParams.append('gender', params.gender);
+        const normalized = this._normalizeParams(params);
+
+        if (normalized.job) queryParams.append('job', normalized.job.join(','));
+        if (normalized.action !== undefined) queryParams.append('action', normalized.action);
+        if (normalized.gender !== undefined) queryParams.append('gender', normalized.gender);
 
         return `${this.baseUrl}/render?${queryParams.toString()}`;
     }
@@ -38,10 +56,7 @@ class ZRendererClient {
      * @returns {Promise<Object>} - RenderResponseData { output: string[] }
      */
     async render(renderRequest) {
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(`${this.baseUrl}/render`, {
             method: 'POST',
@@ -53,8 +68,14 @@ class ZRendererClient {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`Error en zrenderer: ${error.statusMessage || response.statusText}`);
+            let errorMsg = response.statusText;
+            try {
+                const error = await response.json();
+                errorMsg = error.statusMessage || error.message || errorMsg;
+            } catch (e) {
+                // Si no es JSON, usamos el statusText
+            }
+            throw new Error(`Error en zrenderer (${response.status}): ${errorMsg}`);
         }
 
         return await response.json();
@@ -67,11 +88,7 @@ class ZRendererClient {
      */
     async renderImage(renderRequest) {
         const url = this.getRenderUrl(renderRequest);
-
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(url, {
             method: 'POST',
@@ -83,7 +100,14 @@ class ZRendererClient {
         });
 
         if (!response.ok) {
-            throw new Error(`Error descargando imagen: ${response.statusText}`);
+            let errorMsg = response.statusText;
+            try {
+                const error = await response.json();
+                errorMsg = error.statusMessage || error.message || errorMsg;
+            } catch (e) {
+                // Ignorar si no es JSON
+            }
+            throw new Error(`Error descargando imagen (${response.status}): ${errorMsg}`);
         }
 
         const arrayBuffer = await response.arrayBuffer();
