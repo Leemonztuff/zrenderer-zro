@@ -11,13 +11,14 @@ services:
       - ./resources:/zren/resources
     restart: always
 
-  # Plantilla para tu aplicación de juego
+  # Plantilla para tu aplicación de juego (ejemplo con el template incluido)
   # game-app:
-  #   build: ./path-to-your-game-app
+  #   build: ./examples/rpg-tactic-template/server
   #   ports:
-  #     - "3000:3000"
+  #     - "3001:3001"
   #   environment:
   #     - ZRENDERER_URL=http://zrenderer:11011
+  #     - ZRENDERER_TOKEN=test-token
   #     - SUPABASE_URL=your-supabase-url
   #     - SUPABASE_KEY=your-supabase-anon-key
   #   depends_on:

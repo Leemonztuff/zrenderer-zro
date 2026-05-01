@@ -28,8 +28,25 @@ class ZRendererClient {
         if (params.job) queryParams.append('job', Array.isArray(params.job) ? params.job.join(',') : params.job);
         if (params.action !== undefined) queryParams.append('action', params.action);
         if (params.gender !== undefined) queryParams.append('gender', params.gender);
+        if (params.bodyPalette !== undefined) queryParams.append('bodyPalette', params.bodyPalette);
+        if (params.headPalette !== undefined) queryParams.append('headPalette', params.headPalette);
+        if (params.headdir !== undefined) queryParams.append('headdir', params.headdir);
 
         return `${this.baseUrl}/render?${queryParams.toString()}`;
+    }
+
+    /**
+     * Normaliza los parámetros para asegurar tipos correctos antes de enviarlos.
+     * @private
+     */
+    _normalizeParams(params) {
+        return {
+            ...params,
+            job: Array.isArray(params.job) ? params.job.map(String) : [String(params.job)],
+            bodyPalette: params.bodyPalette !== undefined ? Number(params.bodyPalette) : undefined,
+            headPalette: params.headPalette !== undefined ? Number(params.headPalette) : undefined,
+            headdir: params.headdir !== undefined ? String(params.headdir) : undefined
+        };
     }
 
     /**
@@ -38,10 +55,7 @@ class ZRendererClient {
      * @returns {Promise<Object>} - RenderResponseData { output: string[] }
      */
     async render(renderRequest) {
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(`${this.baseUrl}/render`, {
             method: 'POST',
@@ -67,11 +81,7 @@ class ZRendererClient {
      */
     async renderImage(renderRequest) {
         const url = this.getRenderUrl(renderRequest);
-
-        const params = {
-            ...renderRequest,
-            job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
-        };
+        const params = this._normalizeParams(renderRequest);
 
         const response = await fetch(url, {
             method: 'POST',
