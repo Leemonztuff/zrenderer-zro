@@ -40,13 +40,18 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                     job: Array.isArray(spriteParams.job) ? spriteParams.job.map(String) : [String(spriteParams.job)]
                 };
 
+                // Preparar los headers. El token es opcional si se usa un proxy
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (accessToken) {
+                    headers['x-accesstoken'] = accessToken;
+                }
+
                 // Hacer el POST para obtener la imagen como blob
                 const response = await fetch(renderUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-accesstoken': accessToken
-                    },
+                    headers: headers,
                     body: JSON.stringify(params)
                 });
 
