@@ -34,10 +34,16 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
 
         const loadSprite = async () => {
             try {
-                // Aseguramos que job sea un array de strings para el backend
+                // Normalizamos los parámetros para el backend
                 const params = {
                     ...spriteParams,
-                    job: Array.isArray(spriteParams.job) ? spriteParams.job.map(String) : [String(spriteParams.job)]
+                    job: Array.isArray(spriteParams.job) ? spriteParams.job.map(String) : [String(spriteParams.job)],
+                    action: Number(spriteParams.action || 0),
+                    gender: typeof spriteParams.gender === 'string' ? spriteParams.gender : Number(spriteParams.gender || 0),
+                    head: Number(spriteParams.head || 1),
+                    headdir: spriteParams.headdir || 'all',
+                    bodyPalette: Number(spriteParams.bodyPalette ?? -1),
+                    headPalette: Number(spriteParams.headPalette ?? -1)
                 };
 
                 // Hacer el POST para obtener la imagen como blob
