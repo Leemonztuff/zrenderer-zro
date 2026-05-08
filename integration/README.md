@@ -23,9 +23,14 @@ El servicio estará disponible en `http://localhost:11011`. En la primera ejecuc
 
 ## 3. Persistencia con Supabase
 
-En la carpeta `integration/supabase/` encontrarás `init.sql`. Ejecuta este script en el editor SQL de tu proyecto de Supabase para crear la tabla de personajes.
+En la carpeta `integration/supabase/` encontrarás `init.sql`.
 
-Esta tabla (`public.characters`) guarda todos los parámetros necesarios para reconstruir visualmente a un personaje (job, head, headgear, etc.).
+1. Ve a tu panel de **Supabase** -> **SQL Editor**.
+2. Crea una **New Query**.
+3. Pega el contenido de `integration/supabase/init.sql` y ejecútalo (**Run**).
+4. Esto creará la tabla `public.characters` habilitada con Row Level Security (RLS).
+
+Esta tabla guarda todos los parámetros necesarios para reconstruir visualmente a un personaje (job, head, headgear, etc.).
 
 ## 4. Integración en el Backend (Node.js)
 
