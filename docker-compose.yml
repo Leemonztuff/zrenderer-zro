@@ -3,6 +3,7 @@ version: '3.8'
 services:
   zrenderer:
     build: .
+    container_name: zrenderer
     ports:
       - "11011:11011"
     volumes:
@@ -11,14 +12,24 @@ services:
       - ./resources:/zren/resources
     restart: always
 
-  # Plantilla para tu aplicación de juego
-  # game-app:
-  #   build: ./path-to-your-game-app
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - ZRENDERER_URL=http://zrenderer:11011
-  #     - SUPABASE_URL=your-supabase-url
-  #     - SUPABASE_KEY=your-supabase-anon-key
-  #   depends_on:
-  #     - zrenderer
+  # Plantilla para tu aplicación de juego (Backend Proxy)
+  game-app:
+    build:
+      context: ./examples/rpg-tactic-template/server
+    container_name: rpg-game-server
+    ports:
+      - "3001:3001"
+    environment:
+      - ZRENDERER_URL=http://zrenderer:11011
+      - ZRENDERER_TOKEN=test-token # Cambiar por el valor de accesstokens.conf
+      - SUPABASE_URL=https://your-project.supabase.co
+      - SUPABASE_KEY=your-anon-key
+      - PORT=3001
+    depends_on:
+      - zrenderer
+    volumes:
+      - ./integration:/integration # Mapear las herramientas de integración
+    restart: on-failure
+
+  # Nota: El cliente (React) se recomienda correrlo localmente con 'npm run dev'
+  # para aprovechar el Hot Module Replacement durante el desarrollo.
