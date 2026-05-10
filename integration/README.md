@@ -82,3 +82,7 @@ Asegúrate de instalar las dependencias necesarias en tu proyecto (ver `integrat
 - `@react-three/fiber`
 - `react`
 - `react-dom`
+
+## Plantilla de Inicio Rápido
+
+Si quieres ver una implementación completa funcionando, revisa el [Tactical RPG Template](../examples/rpg-tactic-template/README.md). Esta plantilla incluye un frontend interactivo y un backend proxy configurado para usar con Supabase.
