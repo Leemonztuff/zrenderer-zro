@@ -45,22 +45,28 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-accesstoken': accessToken
+                        ...(accessToken && { 'x-accesstoken': accessToken })
                     },
                     body: JSON.stringify(params)
                 });
 
-                if (!response.ok) return;
+                if (!response.ok) {
+                    console.warn(`ZRenderer respondió con error: ${response.status}`);
+                    return;
+                }
 
                 const blob = await response.blob();
+                if (!isMounted) return;
+
                 objectUrl = URL.createObjectURL(blob);
 
                 const loader = new THREE.TextureLoader();
                 loader.load(objectUrl, (tex) => {
                     if (isMounted) {
-                        // Para mantener el arte pixelado nítido
+                        // Para mantener el arte pixelado nítido (Pixel Perfect)
                         tex.minFilter = THREE.NearestFilter;
                         tex.magFilter = THREE.NearestFilter;
+                        tex.generateMipmaps = false;
                         tex.needsUpdate = true;
                         setTexture(tex);
                     } else {
