@@ -111,7 +111,10 @@ And documentation here: https://github.com/zhad3/zrenderer/tree/main/server/api-
 The html can be viewed directly here: https://z0q.neocities.org/ragnarok-online-tools/zrenderer/api/
 
 ## Integration for RPG Games
-If you're building an RPG game with React, Node.js, Supabase, and Three.js, check out our [Integration Guide](integration/README.md) and tools in the `integration/` directory.
+If you're building an RPG game with React, Node.js, Supabase, and Three.js:
+1.  **Read our [Integration Guide](integration/README.md)** for a step-by-step setup.
+2.  **Use the [Tactical RPG Template](examples/rpg-tactic-template/)** as a boilerplate for your project.
+3.  Explore the `integration/` directory for ready-to-use React components and Node.js clients.
 
 ## Docker
 You can use the pre-built and published images to run the server.
