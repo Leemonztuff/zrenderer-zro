@@ -11,14 +11,17 @@ services:
       - ./resources:/zren/resources
     restart: always
 
-  # Plantilla para tu aplicación de juego
-  # game-app:
-  #   build: ./path-to-your-game-app
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - ZRENDERER_URL=http://zrenderer:11011
-  #     - SUPABASE_URL=your-supabase-url
-  #     - SUPABASE_KEY=your-supabase-anon-key
-  #   depends_on:
-  #     - zrenderer
+  # Aplicación de juego (React + Node.js)
+  game-app:
+    build: ./examples/rpg-tactic-template/server
+    ports:
+      - "3001:3001"
+      - "3000:3000"
+    environment:
+      - ZRENDERER_URL=http://zrenderer:11011
+      - SUPABASE_URL=your-supabase-url
+      - SUPABASE_KEY=your-supabase-anon-key
+    volumes:
+      - ./integration:/app/integration
+    depends_on:
+      - zrenderer
