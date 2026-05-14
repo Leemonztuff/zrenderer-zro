@@ -12,13 +12,19 @@ services:
     restart: always
 
   # Plantilla para tu aplicación de juego
-  # game-app:
-  #   build: ./path-to-your-game-app
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - ZRENDERER_URL=http://zrenderer:11011
-  #     - SUPABASE_URL=your-supabase-url
-  #     - SUPABASE_KEY=your-supabase-anon-key
-  #   depends_on:
-  #     - zrenderer
+  game-app:
+    build:
+      context: .
+      dockerfile: ./examples/rpg-tactic-template/server/Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./integration:/app/integration
+      - ./examples/rpg-tactic-template/server:/app/server
+    working_dir: /app/server
+    environment:
+      - ZRENDERER_URL=http://zrenderer:11011
+      - SUPABASE_URL=your-supabase-url
+      - SUPABASE_KEY=your-supabase-anon-key
+    depends_on:
+      - zrenderer
