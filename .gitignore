@@ -18,3 +18,9 @@ bin/
 zrenderer.conf
 output/
 accesstokens.conf
+
+# Node.js
+**/node_modules/
+.env
+**/dist/
+*.log
