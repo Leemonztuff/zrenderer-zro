@@ -41,12 +41,17 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                 };
 
                 // Hacer el POST para obtener la imagen como blob
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (accessToken) {
+                    headers['x-accesstoken'] = accessToken;
+                }
+
                 const response = await fetch(renderUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-accesstoken': accessToken
-                    },
+                    headers,
                     body: JSON.stringify(params)
                 });
 
