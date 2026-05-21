@@ -19,9 +19,12 @@ class ZRendererClient {
      */
     getRenderUrl(params) {
         const queryParams = new URLSearchParams({
-            downloadimage: 'true',
-            accesstoken: this.accessToken
+            downloadimage: 'true'
         });
+
+        if (this.accessToken) {
+            queryParams.append('accesstoken', this.accessToken);
+        }
 
         // Opcionalmente podemos añadir parámetros comunes a la query para que la URL sea más descriptiva
         // aunque el renderizador prefiera el cuerpo JSON en el POST.
@@ -43,18 +46,29 @@ class ZRendererClient {
             job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
         };
 
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (this.accessToken) {
+            headers['x-accesstoken'] = this.accessToken;
+        }
+
         const response = await fetch(`${this.baseUrl}/render`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-accesstoken': this.accessToken
-            },
+            headers,
             body: JSON.stringify(params)
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`Error en zrenderer: ${error.statusMessage || response.statusText}`);
+            let errorMessage = response.statusText;
+            try {
+                const error = await response.json();
+                errorMessage = error.statusMessage || errorMessage;
+            } catch (e) {
+                // Si no es JSON, usamos el statusText
+            }
+            throw new Error(`Error en zrenderer: ${errorMessage}`);
         }
 
         return await response.json();
@@ -73,12 +87,17 @@ class ZRendererClient {
             job: Array.isArray(renderRequest.job) ? renderRequest.job.map(String) : [String(renderRequest.job)]
         };
 
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (this.accessToken) {
+            headers['x-accesstoken'] = this.accessToken;
+        }
+
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-accesstoken': this.accessToken
-            },
+            headers,
             body: JSON.stringify(params)
         });
 
