@@ -33,17 +33,26 @@ app.get('/api/character/:id', async (req, res) => {
             .single();
 
         if (error) {
-            console.warn(`Personaje ${req.params.id} no encontrado en Supabase, usando datos de prueba.`);
-            return res.json({
-                id: req.params.id,
-                name: 'Heroe de Prueba (Fallback)',
-                visuals: {
-                    job: [4012], // Sniper
-                    gender: 1,
-                    head: 1,
-                    action: 0
+            if (error.code === 'PGRST116') {
+                console.warn(`Personaje ${req.params.id} no encontrado en Supabase.`);
+                // Solo devolvemos fallback si es una petición de desarrollo específica o si no hay Supabase configurado
+                if (supabaseUrl.includes('your-project')) {
+                   return res.json({
+                        id: req.params.id,
+                        name: 'Heroe de Prueba (Fallback)',
+                        visuals: {
+                            job: [4012],
+                            gender: 1,
+                            head: 1,
+                            bodyPalette: 0,
+                            headPalette: 0,
+                            action: 0
+                        }
+                    });
                 }
-            });
+                return res.status(404).json({ error: 'Personaje no encontrado' });
+            }
+            throw error;
         }
 
         // Mapeamos los datos de Supabase al formato que espera el frontend
@@ -54,6 +63,8 @@ app.get('/api/character/:id', async (req, res) => {
                 job: character.job,
                 gender: character.gender,
                 head: character.head,
+                bodyPalette: character.body_palette,
+                headPalette: character.head_palette,
                 action: 0 // Acción inicial
             }
         });

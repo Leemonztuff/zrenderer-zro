@@ -6,6 +6,7 @@ import ROSpriteBillboard from '../../../../integration/react-three/ROSpriteBillb
 function GameScene() {
   const [charData, setCharData] = useState({
     name: 'Cargando...',
+    position: [0, 0, 0],
     visuals: {
       job: [4012],
       gender: 0,
@@ -41,14 +42,43 @@ function GameScene() {
     }));
   };
 
+  const updateHead = (newHead) => {
+    setCharData(prev => ({
+      ...prev,
+      visuals: { ...prev.visuals, head: newHead }
+    }));
+  };
+
+  const updateGender = (newGender) => {
+    setCharData(prev => ({
+      ...prev,
+      visuals: { ...prev.visuals, gender: newGender }
+    }));
+  };
+
+  const move = (dx, dz) => {
+    setCharData(prev => ({
+      ...prev,
+      position: [prev.position[0] + dx, prev.position[1], prev.position[2] + dz],
+      visuals: { ...prev.visuals, action: 8 } // Activa animación de caminar
+    }));
+    // Volver a "Stand" después de un momento
+    setTimeout(() => {
+      setCharData(prev => ({
+        ...prev,
+        visuals: { ...prev.visuals, action: 0 }
+      }));
+    }, 500);
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#222' }}>
-      <Canvas camera={{ position: [5, 5, 5], fov: 45 }}>
-        <ambientLight intensity={1.5} />
-        <pointLight position={[10, 10, 10]} />
+      <Canvas camera={{ position: [10, 10, 10], fov: 45 }}>
+        <ambientLight intensity={2} />
+        <directionalLight position={[10, 10, 10]} intensity={1} />
 
         <Suspense fallback={null}>
-          <group position={[0, 0, 0]}>
+          <group position={charData.position}>
             {/* El Billboard de RO usando el proxy del backend */}
             <ROSpriteBillboard
               baseUrl={PROXY_URL}
@@ -59,19 +89,60 @@ function GameScene() {
           </group>
         </Suspense>
 
-        <Grid infiniteGrid />
+        <Grid
+          infiniteGrid
+          cellSize={1}
+          sectionSize={5}
+          fadeDistance={30}
+          sectionColor="#333"
+          cellColor="#444"
+        />
         <OrbitControls makeDefault />
       </Canvas>
 
       <div style={{ position: 'absolute', top: 20, left: 20, color: 'white', fontFamily: 'sans-serif', pointerEvents: 'none' }}>
         <h1>{charData.name}</h1>
-        <p>Usa el mouse para rotar la cámara.</p>
+        <p>Usa el mouse para rotar la cámara y los botones para moverte.</p>
 
-        <div style={{ pointerEvents: 'auto', display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <button onClick={() => updateJob([4012])} style={{ padding: '8px 16px', cursor: 'pointer' }}>Sniper</button>
-          <button onClick={() => updateJob([1001])} style={{ padding: '8px 16px', cursor: 'pointer' }}>Scorpion</button>
-          <button onClick={() => updateAction(0)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Stand</button>
-          <button onClick={() => updateAction(8)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Walk</button>
+        <div style={{ pointerEvents: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <strong>Clase:</strong>
+            <button onClick={() => updateJob([4012])} style={{ padding: '4px 8px', cursor: 'pointer' }}>Sniper</button>
+            <button onClick={() => updateJob([7])} style={{ padding: '4px 8px', cursor: 'pointer' }}>Knight</button>
+            <button onClick={() => updateJob([12])} style={{ padding: '4px 8px', cursor: 'pointer' }}>Assassin</button>
+          </div>
+
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <strong>Género:</strong>
+            <button onClick={() => updateGender(0)} style={{ padding: '4px 8px', cursor: 'pointer' }}>Mujer</button>
+            <button onClick={() => updateGender(1)} style={{ padding: '4px 8px', cursor: 'pointer' }}>Hombre</button>
+          </div>
+
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <strong>Cabello:</strong>
+            <button onClick={() => updateHead(1)} style={{ padding: '4px 8px', cursor: 'pointer' }}>1</button>
+            <button onClick={() => updateHead(5)} style={{ padding: '4px 8px', cursor: 'pointer' }}>5</button>
+            <button onClick={() => updateHead(10)} style={{ padding: '4px 8px', cursor: 'pointer' }}>10</button>
+            <button onClick={() => updateHead(20)} style={{ padding: '4px 8px', cursor: 'pointer' }}>20</button>
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px' }}>
+                <div />
+                <button onClick={() => move(0, -1)} style={{ padding: '10px', cursor: 'pointer' }}>N</button>
+                <div />
+                <button onClick={() => move(-1, 0)} style={{ padding: '10px', cursor: 'pointer' }}>W</button>
+                <button onClick={() => move(0, 1)} style={{ padding: '10px', cursor: 'pointer' }}>S</button>
+                <button onClick={() => move(1, 0)} style={{ padding: '10px', cursor: 'pointer' }}>E</button>
+             </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button onClick={() => updateAction(17)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Sentarse</button>
+            <button onClick={() => updateAction(16)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Atacar</button>
+          </div>
+
         </div>
       </div>
     </div>
