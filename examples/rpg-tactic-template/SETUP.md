@@ -6,7 +6,7 @@ Este template proporciona una base sólida para crear un juego de RPG táctico u
 
 - **zrenderer**: Servicio en D que se encarga de procesar los assets de RO y generar los sprites.
 - **Backend (Node.js)**: Actúa como un proxy para el renderizador y gestiona la persistencia de datos con Supabase.
-- **Frontend (React + Three.js)**: La interfaz del juego que visualiza los personajes en un entorno 3D.
+- **Frontend (React + Three.js)**: La interfaz del juego que visualiza los personajes en un entorno 3D con controles de movimiento y personalización.
 - **Supabase**: Base de datos para guardar personajes, cuentas y progreso.
 
 ## Pasos para la Configuración
@@ -57,20 +57,9 @@ El token de acceso se generará en el archivo `accesstokens.conf`.
 
 El cliente estará disponible en `http://localhost:3000`.
 
-## Uso del Componente ROSpriteBillboard
+## Características del Template
 
-El frontend utiliza el componente `ROSpriteBillboard` que se encuentra en `integration/react-three/`. Este componente se encarga de solicitar el sprite al backend proxy y renderizarlo como un billboard nítido en Three.js.
-
-```jsx
-<ROSpriteBillboard
-    baseUrl="http://localhost:3001/api" // Apunta al proxy de tu backend
-    spriteParams={{
-        job: [4012], // ID del trabajo (Sniper)
-        gender: 1,   // Género (1: Male, 0: Female)
-        head: 1,     // ID de la cabeza
-        action: 0    // ID de la acción (Stand, Walk, etc.)
-    }}
-    position={[0, 1, 0]}
-    scale={0.03}
-/>
-```
+- **Billboard Optimizado**: Usa `ROSpriteBillboard` para renderizado nítido de sprites 2D en un mundo 3D.
+- **Movimiento Táctico**: Lógica básica de movimiento en grilla integrada en `App.jsx`.
+- **Personalización en Tiempo Real**: Cambia de clase (Job), acción y género desde la UI.
+- **Persistencia con Supabase**: El backend ya está mapeado para leer todos los parámetros visuales (headgear, palettes, etc.) desde la base de datos.

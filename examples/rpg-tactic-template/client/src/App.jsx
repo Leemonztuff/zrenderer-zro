@@ -1,9 +1,10 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import ROSpriteBillboard from '../../../../integration/react-three/ROSpriteBillboard';
 
 function GameScene() {
+  const [position, setPosition] = useState([0, 0, 0]);
   const [charData, setCharData] = useState({
     name: 'Cargando...',
     visuals: {
@@ -14,31 +15,39 @@ function GameScene() {
     }
   });
 
-  // Recomendamos usar el proxy del backend para no exponer el token del renderizador
   const PROXY_URL = 'http://localhost:3001/api';
 
-  // Ejemplo de cómo cargar un personaje desde el backend (que a su vez usa Supabase)
   useEffect(() => {
     fetch(`${PROXY_URL}/character/default-id`)
       .then(res => res.json())
       .then(data => {
         setCharData(data);
       })
-      .catch(err => console.error("Error al cargar personaje:", err));
+      .catch(err => {
+        console.warn("Usando datos locales por defecto");
+        setCharData({
+            name: 'Héroe de Prueba',
+            visuals: { job: [4012], gender: 0, head: 5, action: 0 }
+        });
+      });
   }, []);
 
-  const updateAction = (newAction) => {
+  const updateVisuals = useCallback((newVisuals) => {
     setCharData(prev => ({
       ...prev,
-      visuals: { ...prev.visuals, action: newAction }
+      visuals: { ...prev.visuals, ...newVisuals }
     }));
-  };
+  }, []);
 
-  const updateJob = (newJob) => {
-    setCharData(prev => ({
-      ...prev,
-      visuals: { ...prev.visuals, job: newJob }
-    }));
+  const move = (dx, dz) => {
+    const oldAction = charData.visuals.action;
+    setPosition(prev => [prev[0] + dx, prev[1], prev[2] + dz]);
+
+    // Cambiar a animación de caminar temporalmente
+    updateVisuals({ action: 8 });
+    setTimeout(() => {
+        updateVisuals({ action: oldAction });
+    }, 500);
   };
 
   return (
@@ -48,8 +57,7 @@ function GameScene() {
         <pointLight position={[10, 10, 10]} />
 
         <Suspense fallback={null}>
-          <group position={[0, 0, 0]}>
-            {/* El Billboard de RO usando el proxy del backend */}
+          <group position={position}>
             <ROSpriteBillboard
               baseUrl={PROXY_URL}
               spriteParams={charData.visuals}
@@ -59,19 +67,49 @@ function GameScene() {
           </group>
         </Suspense>
 
-        <Grid infiniteGrid />
+        <Grid infiniteGrid sectionSize={1} sectionColor="#444" cellColor="#333" />
         <OrbitControls makeDefault />
       </Canvas>
 
-      <div style={{ position: 'absolute', top: 20, left: 20, color: 'white', fontFamily: 'sans-serif', pointerEvents: 'none' }}>
-        <h1>{charData.name}</h1>
-        <p>Usa el mouse para rotar la cámara.</p>
+      {/* Interfaz de Usuario */}
+      <div style={{
+        position: 'absolute', top: 20, left: 20, color: 'white',
+        fontFamily: 'sans-serif', pointerEvents: 'none',
+        background: 'rgba(0,0,0,0.5)', padding: '20px', borderRadius: '8px'
+      }}>
+        <h1 style={{ margin: '0 0 10px 0' }}>{charData.name}</h1>
 
-        <div style={{ pointerEvents: 'auto', display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <button onClick={() => updateJob([4012])} style={{ padding: '8px 16px', cursor: 'pointer' }}>Sniper</button>
-          <button onClick={() => updateJob([1001])} style={{ padding: '8px 16px', cursor: 'pointer' }}>Scorpion</button>
-          <button onClick={() => updateAction(0)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Stand</button>
-          <button onClick={() => updateAction(8)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Walk</button>
+        <div style={{ pointerEvents: 'auto' }}>
+          <h3>Movimiento</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px', width: '120px' }}>
+            <div />
+            <button onClick={() => move(0, -1)}>N</button>
+            <div />
+            <button onClick={() => move(-1, 0)}>W</button>
+            <button onClick={() => move(0, 1)}>S</button>
+            <button onClick={() => move(1, 0)}>E</button>
+          </div>
+
+          <h3>Clase</h3>
+          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+            <button onClick={() => updateVisuals({ job: [4012] })}>Sniper</button>
+            <button onClick={() => updateVisuals({ job: [7] })}>Knight</button>
+            <button onClick={() => updateVisuals({ job: [12] })}>Assassin</button>
+            <button onClick={() => updateVisuals({ job: [1001] })}>Scorpion</button>
+          </div>
+
+          <h3>Acción</h3>
+          <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
+            <button onClick={() => updateVisuals({ action: 0 })}>Stand</button>
+            <button onClick={() => updateVisuals({ action: 17 })}>Sit</button>
+            <button onClick={() => updateVisuals({ action: 16 })}>Attack</button>
+          </div>
+
+          <h3>Género</h3>
+          <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
+            <button onClick={() => updateVisuals({ gender: 0 })}>Femenino</button>
+            <button onClick={() => updateVisuals({ gender: 1 })}>Masculino</button>
+          </div>
         </div>
       </div>
     </div>
