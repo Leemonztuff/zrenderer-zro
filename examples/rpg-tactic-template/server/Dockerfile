@@ -2,11 +2,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+# Instalamos dependencias primero para aprovechar el cache
+COPY examples/rpg-tactic-template/server/package*.json ./server/
+RUN cd server && npm install
 
-COPY . .
+# Copiamos la integración y el servidor
+COPY integration ./integration
+COPY examples/rpg-tactic-template/server ./server
 
 EXPOSE 3001
 
+WORKDIR /app/server
 CMD ["npm", "start"]
