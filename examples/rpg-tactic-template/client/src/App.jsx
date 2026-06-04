@@ -1,7 +1,23 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import ROSpriteBillboard from '../../../../integration/react-three/ROSpriteBillboard';
+
+const PROXY_URL = 'http://localhost:3001/api';
+
+const JOBS = [
+  { name: 'Sniper', id: [4012] },
+  { name: 'Knight', id: [7] },
+  { name: 'Assassin', id: [12] },
+  { name: 'Scorpion', id: [1000] }
+];
+
+const ACTIONS = [
+  { name: 'Stand', id: 0 },
+  { name: 'Walk', id: 8 },
+  { name: 'Attack', id: 16 },
+  { name: 'Sit', id: 17 }
+];
 
 function GameScene() {
   const [charData, setCharData] = useState({
@@ -14,42 +30,52 @@ function GameScene() {
     }
   });
 
-  // Recomendamos usar el proxy del backend para no exponer el token del renderizador
-  const PROXY_URL = 'http://localhost:3001/api';
+  const [position, setPosition] = useState([0, 0, 0]);
 
-  // Ejemplo de cómo cargar un personaje desde el backend (que a su vez usa Supabase)
+  // Cargar personaje inicial
   useEffect(() => {
     fetch(`${PROXY_URL}/character/default-id`)
       .then(res => res.json())
       .then(data => {
         setCharData(data);
       })
-      .catch(err => console.error("Error al cargar personaje:", err));
+      .catch(err => {
+        console.warn("Backend no disponible, usando local fallback");
+        setCharData({
+          name: 'Héroe de Prueba',
+          visuals: { job: [4012], gender: 0, head: 5, action: 0 }
+        });
+      });
   }, []);
 
-  const updateAction = (newAction) => {
+  const updateVisuals = (patch) => {
     setCharData(prev => ({
       ...prev,
-      visuals: { ...prev.visuals, action: newAction }
+      visuals: { ...prev.visuals, ...patch }
     }));
   };
 
-  const updateJob = (newJob) => {
-    setCharData(prev => ({
-      ...prev,
-      visuals: { ...prev.visuals, job: newJob }
-    }));
-  };
+  const move = useCallback((dx, dz) => {
+    // Activar animación de caminar
+    updateVisuals({ action: 8 });
+
+    // Actualizar posición
+    setPosition(prev => [prev[0] + dx, prev[1], prev[2] + dz]);
+
+    // Volver a 'Stand' después de un momento
+    setTimeout(() => {
+      updateVisuals({ action: 0 });
+    }, 500);
+  }, []);
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#222' }}>
-      <Canvas camera={{ position: [5, 5, 5], fov: 45 }}>
+      <Canvas camera={{ position: [8, 8, 8], fov: 45 }}>
         <ambientLight intensity={1.5} />
         <pointLight position={[10, 10, 10]} />
 
         <Suspense fallback={null}>
-          <group position={[0, 0, 0]}>
-            {/* El Billboard de RO usando el proxy del backend */}
+          <group position={position}>
             <ROSpriteBillboard
               baseUrl={PROXY_URL}
               spriteParams={charData.visuals}
@@ -59,19 +85,91 @@ function GameScene() {
           </group>
         </Suspense>
 
-        <Grid infiniteGrid />
+        <Grid infiniteGrid sectionSize={1} cellSize={0.5} />
         <OrbitControls makeDefault />
       </Canvas>
 
-      <div style={{ position: 'absolute', top: 20, left: 20, color: 'white', fontFamily: 'sans-serif', pointerEvents: 'none' }}>
-        <h1>{charData.name}</h1>
-        <p>Usa el mouse para rotar la cámara.</p>
+      {/* UI Overlay */}
+      <div style={{
+        position: 'absolute', top: 20, left: 20,
+        color: 'white', fontFamily: 'sans-serif',
+        pointerEvents: 'none', background: 'rgba(0,0,0,0.5)',
+        padding: '20px', borderRadius: '8px'
+      }}>
+        <h1 style={{ margin: '0 0 10px 0' }}>{charData.name}</h1>
+        <p>Posición: {position[0]}, {position[2]}</p>
 
-        <div style={{ pointerEvents: 'auto', display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <button onClick={() => updateJob([4012])} style={{ padding: '8px 16px', cursor: 'pointer' }}>Sniper</button>
-          <button onClick={() => updateJob([1001])} style={{ padding: '8px 16px', cursor: 'pointer' }}>Scorpion</button>
-          <button onClick={() => updateAction(0)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Stand</button>
-          <button onClick={() => updateAction(8)} style={{ padding: '8px 16px', cursor: 'pointer' }}>Walk</button>
+        <div style={{ pointerEvents: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+
+          {/* Movimiento */}
+          <div>
+            <strong>Movimiento:</strong>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 40px)', gap: '5px', marginTop: '5px' }}>
+              <div />
+              <button onClick={() => move(0, -1)} title="North">▲</button>
+              <div />
+              <button onClick={() => move(-1, 0)} title="West">◀</button>
+              <button onClick={() => move(0, 1)} title="South">▼</button>
+              <button onClick={() => move(1, 0)} title="East">▶</button>
+            </div>
+          </div>
+
+          {/* Trabajo / Job */}
+          <div>
+            <strong>Clase:</strong>
+            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginTop: '5px' }}>
+              {JOBS.map(job => (
+                <button
+                  key={job.name}
+                  onClick={() => updateVisuals({ job: job.id })}
+                  style={{ background: charData.visuals.job[0] === job.id[0] ? '#4CAF50' : '#fff' }}
+                >
+                  {job.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Acción */}
+          <div>
+            <strong>Acción:</strong>
+            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginTop: '5px' }}>
+              {ACTIONS.map(action => (
+                <button
+                  key={action.name}
+                  onClick={() => updateVisuals({ action: action.id })}
+                  style={{ background: charData.visuals.action === action.id ? '#2196F3' : '#fff' }}
+                >
+                  {action.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Otros Parámetros */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <label>
+              Género:
+              <select
+                value={charData.visuals.gender}
+                onChange={(e) => updateVisuals({ gender: parseInt(e.target.value) })}
+              >
+                <option value={0}>Female</option>
+                <option value={1}>Male</option>
+              </select>
+            </label>
+            <label>
+              Cabeza:
+              <input
+                type="number"
+                value={charData.visuals.head}
+                min={1} max={30}
+                style={{ width: '40px' }}
+                onChange={(e) => updateVisuals({ head: parseInt(e.target.value) })}
+              />
+            </label>
+          </div>
+
         </div>
       </div>
     </div>

@@ -18,3 +18,9 @@ bin/
 zrenderer.conf
 output/
 accesstokens.conf
+
+# Common ignore patterns
+**/node_modules/
+.env
+**/dist/
+*.log
