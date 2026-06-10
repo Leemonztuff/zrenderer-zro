@@ -33,32 +33,69 @@ app.get('/api/character/:id', async (req, res) => {
             .single();
 
         if (error) {
-            console.warn(`Personaje ${req.params.id} no encontrado en Supabase, usando datos de prueba.`);
-            return res.json({
-                id: req.params.id,
-                name: 'Heroe de Prueba (Fallback)',
-                visuals: {
-                    job: [4012], // Sniper
-                    gender: 1,
-                    head: 1,
-                    action: 0
-                }
-            });
+            if (error.code === 'PGRST116') { // Row not found
+                console.warn(`Personaje ${req.params.id} no encontrado en Supabase, usando datos de prueba.`);
+                return res.json({
+                    id: req.params.id,
+                    name: 'Heroe de Prueba (Fallback)',
+                    position: [0, 0, 0],
+                    visuals: {
+                        job: [4012], // Sniper
+                        gender: 1,
+                        head: 1,
+                        action: 0
+                    }
+                });
+            }
+            throw error;
         }
 
         // Mapeamos los datos de Supabase al formato que espera el frontend
         res.json({
             id: character.id,
             name: character.name,
+            position: [character.pos_x || 0, character.pos_y || 0, character.pos_z || 0],
             visuals: {
                 job: character.job,
                 gender: character.gender,
                 head: character.head,
+                outfit: character.outfit,
+                headgear: character.headgear,
+                garment: character.garment,
+                weapon: character.weapon,
+                shield: character.shield,
+                bodyPalette: character.body_palette,
+                headPalette: character.head_palette,
                 action: 0 // Acción inicial
             }
         });
     } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error("Error en GET /api/character/:id:", err);
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+    }
+});
+
+// Actualizar la posición de un personaje
+app.patch('/api/character/:id/position', async (req, res) => {
+    const { x, y, z } = req.body;
+    try {
+        const { data, error } = await supabase
+            .from('characters')
+            .update({
+                pos_x: x,
+                pos_y: y,
+                pos_z: z,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', req.params.id)
+            .select();
+
+        if (error) throw error;
+
+        res.json({ success: true, data });
+    } catch (err) {
+        console.error("Error en PATCH /api/character/:id/position:", err);
+        res.status(500).json({ error: 'No se pudo actualizar la posición' });
     }
 });
 
