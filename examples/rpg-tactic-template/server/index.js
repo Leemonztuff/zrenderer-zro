@@ -10,7 +10,13 @@ const supabaseKey = process.env.SUPABASE_KEY || 'your-anon-key';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Importamos el cliente de zrenderer desde la carpeta de integración
-const ZRendererClient = require('../../../integration/node-client/zrenderer-client');
+// Soporta tanto rutas locales como dentro de contenedores Docker
+let ZRendererClient;
+try {
+    ZRendererClient = require('../../../integration/node-client/zrenderer-client');
+} catch (e) {
+    ZRendererClient = require('../integration/node-client/zrenderer-client');
+}
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -23,7 +29,7 @@ const ZRENDERER_TOKEN = process.env.ZRENDERER_TOKEN || 'test-token'; // Debería
 
 const renderer = new ZRendererClient(ZRENDERER_URL, ZRENDERER_TOKEN);
 
-// Endpoint para obtener la configuración visual de un personaje
+// Endpoint para obtener la configuración visual de un personaje desde Supabase
 app.get('/api/character/:id', async (req, res) => {
     try {
         const { data: character, error } = await supabase
@@ -36,40 +42,82 @@ app.get('/api/character/:id', async (req, res) => {
             console.warn(`Personaje ${req.params.id} no encontrado en Supabase, usando datos de prueba.`);
             return res.json({
                 id: req.params.id,
-                name: 'Heroe de Prueba (Fallback)',
+                name: 'Héroe de Prueba (Fallback)',
                 visuals: {
                     job: [4012], // Sniper
                     gender: 1,
                     head: 1,
                     action: 0
-                }
+                },
+                stats: {
+                    level: 1,
+                    hp: { current: 100, max: 100 },
+                    sp: { current: 50, max: 50 }
+                },
+                position: { x: 0, y: 0, z: 0 }
             });
         }
 
-        // Mapeamos los datos de Supabase al formato que espera el frontend
+        // Mapear campos de la DB a los parámetros visuales
         res.json({
             id: character.id,
             name: character.name,
             visuals: {
-                job: character.job,
+                job: character.job || [0],
                 gender: character.gender,
                 head: character.head,
-                action: 0 // Acción inicial
-            }
+                headgear: character.headgear,
+                garment: character.garment,
+                weapon: character.weapon,
+                shield: character.shield,
+                bodyPalette: character.body_palette,
+                headPalette: character.head_palette,
+                action: 0 // Acción inicial por defecto
+            },
+            stats: {
+                level: character.level,
+                hp: { current: character.hp_current, max: character.hp_max },
+                sp: { current: character.sp_current, max: character.sp_max }
+            },
+            position: { x: character.pos_x, y: character.pos_y, z: character.pos_z }
         });
-    } catch (err) {
+    } catch (error) {
+        console.error("Error consultando Supabase:", error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
-// Proxy para el renderizador (opcional, si no quieres exponer el zrenderer directamente)
+// Endpoint para actualizar la posición del personaje (Movimiento Táctico)
+app.patch('/api/character/:id/position', async (req, res) => {
+    const { x, y, z } = req.body;
+    try {
+        const { data, error } = await supabase
+            .from('characters')
+            .update({ pos_x: x, pos_y: y, pos_z: z })
+            .eq('id', req.params.id)
+            .select();
+
+        if (error) throw error;
+        res.json(data[0]);
+    } catch (error) {
+        console.error("Error actualizando posición:", error);
+        res.status(500).json({ error: 'No se pudo actualizar la posición' });
+    }
+});
+
+// Proxy para el renderizador para no exponer el token en el cliente
 app.post('/api/render', async (req, res) => {
+    if (!req.body.job) {
+        return res.status(400).json({ error: 'El campo "job" es obligatorio' });
+    }
+
     try {
         const imageBuffer = await renderer.renderImage(req.body);
         res.set('Content-Type', 'image/png');
+        res.set('Cache-Control', 'public, max-age=3600'); // Cachear por 1 hora
         res.send(imageBuffer);
     } catch (error) {
-        console.error(error);
+        console.error("Error en proxy de renderizado:", error);
         res.status(500).json({ error: 'Error al renderizar sprite' });
     }
 });
