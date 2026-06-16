@@ -23,7 +23,7 @@ const ZRENDERER_TOKEN = process.env.ZRENDERER_TOKEN || 'test-token'; // Debería
 
 const renderer = new ZRendererClient(ZRENDERER_URL, ZRENDERER_TOKEN);
 
-// Endpoint para obtener la configuración visual de un personaje
+// Endpoint para obtener la configuración visual y posición de un personaje
 app.get('/api/character/:id', async (req, res) => {
     try {
         const { data: character, error } = await supabase
@@ -32,15 +32,17 @@ app.get('/api/character/:id', async (req, res) => {
             .eq('id', req.params.id)
             .single();
 
-        if (error) {
+        if (error || !character) {
             console.warn(`Personaje ${req.params.id} no encontrado en Supabase, usando datos de prueba.`);
             return res.json({
-                id: req.params.id,
-                name: 'Heroe de Prueba (Fallback)',
+                id: 'default-id',
+                name: 'Héroe de Prueba',
+                pos_x: 0,
+                pos_y: 0,
                 visuals: {
                     job: [4012], // Sniper
                     gender: 1,
-                    head: 1,
+                    head: 5,
                     action: 0
                 }
             });
@@ -50,15 +52,45 @@ app.get('/api/character/:id', async (req, res) => {
         res.json({
             id: character.id,
             name: character.name,
+            pos_x: character.pos_x || 0,
+            pos_y: character.pos_y || 0,
             visuals: {
-                job: character.job,
-                gender: character.gender,
-                head: character.head,
-                action: 0 // Acción inicial
+                job: character.job || [0],
+                gender: character.gender ?? 1,
+                head: character.head ?? 1,
+                outfit: character.outfit ?? 0,
+                headgear: character.headgear || [],
+                garment: character.garment ?? 0,
+                weapon: character.weapon ?? 0,
+                shield: character.shield ?? 0,
+                body_palette: character.body_palette ?? -1,
+                head_palette: character.head_palette ?? -1,
+                action: 0 // Acción inicial (Stand)
             }
         });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// Endpoint para actualizar la posición del personaje (Persistencia Táctica)
+app.patch('/api/character/:id/position', async (req, res) => {
+    const { x, y } = req.body;
+
+    try {
+        const { error } = await supabase
+            .from('characters')
+            .update({ pos_x: x, pos_y: y, updated_at: new Date() })
+            .eq('id', req.params.id);
+
+        if (error) throw error;
+
+        res.json({ success: true, position: { x, y } });
+    } catch (err) {
+        console.error("Error al actualizar posición:", err);
+        // Si falla (ej: no hay DB), respondemos éxito para permitir juego local/demo
+        res.json({ success: false, message: "Modo offline o error de DB", position: { x, y } });
     }
 });
 
