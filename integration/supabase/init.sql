@@ -24,8 +24,11 @@ CREATE TABLE IF NOT EXISTS public.characters (
     hp_max INTEGER DEFAULT 100,
     sp_current INTEGER DEFAULT 50,
     sp_max INTEGER DEFAULT 50,
+
+    -- Posicionamiento en el mundo 3D
     pos_x INTEGER DEFAULT 0,
     pos_y INTEGER DEFAULT 0,
+    pos_z INTEGER DEFAULT 0,
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
