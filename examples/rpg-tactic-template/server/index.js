@@ -50,6 +50,7 @@ app.get('/api/character/:id', async (req, res) => {
         res.json({
             id: character.id,
             name: character.name,
+            position: [character.pos_x || 0, character.pos_y || 0, character.pos_z || 0],
             visuals: {
                 job: character.job,
                 gender: character.gender,
@@ -59,6 +60,22 @@ app.get('/api/character/:id', async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+app.patch('/api/character/:id/position', async (req, res) => {
+    try {
+        const { x, y, z } = req.body;
+        const { error } = await supabase
+            .from('characters')
+            .update({ pos_x: x, pos_y: y, pos_z: z })
+            .eq('id', req.params.id);
+
+        if (error) throw error;
+        res.json({ message: 'Posición actualizada' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al actualizar posición' });
     }
 });
 
