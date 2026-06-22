@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.characters (
     sp_max INTEGER DEFAULT 50,
     pos_x INTEGER DEFAULT 0,
     pos_y INTEGER DEFAULT 0,
+    pos_z INTEGER DEFAULT 0,
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
