@@ -37,6 +37,7 @@ app.get('/api/character/:id', async (req, res) => {
             return res.json({
                 id: req.params.id,
                 name: 'Heroe de Prueba (Fallback)',
+                position: [0, 0, 0],
                 visuals: {
                     job: [4012], // Sniper
                     gender: 1,
@@ -50,6 +51,7 @@ app.get('/api/character/:id', async (req, res) => {
         res.json({
             id: character.id,
             name: character.name,
+            position: [character.pos_x || 0, 0, character.pos_z || 0],
             visuals: {
                 job: character.job,
                 gender: character.gender,
@@ -59,6 +61,23 @@ app.get('/api/character/:id', async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// Actualizar posición del personaje
+app.patch('/api/character/:id/position', async (req, res) => {
+    try {
+        const { x, y, z } = req.body;
+        const { data, error } = await supabase
+            .from('characters')
+            .update({ pos_x: x, pos_z: z }) // Mapeamos Z de Three.js a pos_z de DB
+            .eq('id', req.params.id);
+
+        if (error) throw error;
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al actualizar posición' });
     }
 });
 

@@ -4,8 +4,8 @@ Este es un punto de partida para crear un juego de RPG táctico utilizando sprit
 
 ## Estructura del Proyecto
 
-- `server/`: Backend en Node.js/Express. Sirve como puente entre el juego y el renderizador/base de datos.
-- `client/`: Frontend en React utilizando Vite, Three.js y @react-three/fiber.
+- `server/`: Backend en Node.js/Express. Gestiona la lógica de personajes, persistencia en Supabase y actúa como proxy para el renderizador.
+- `client/`: Frontend en React utilizando Vite, Three.js y @react-three/fiber. Incluye lógica de movimiento y sincronización.
 
 ## Requisitos Previos
 
@@ -60,11 +60,18 @@ El cliente estará disponible en `http://localhost:3000`.
 
 ## Integración con Supabase
 
-Para persistir tus personajes, utiliza el script SQL ubicado en `integration/supabase/init.sql`.
+Para persistir tus personajes, utiliza el script SQL ubicado en `integration/supabase/init.sql`. Este esquema incluye campos para la apariencia (job, head, gender) y la posición (`pos_x`, `pos_y`, `pos_z`).
 
-1. Crea un proyecto en Supabase.
+1. Crea un proyecto en [Supabase](https://supabase.com/).
 2. Ejecuta el SQL en el editor de consultas de Supabase.
-3. Actualiza el backend para consultar la tabla `public.characters` en lugar de usar datos estáticos.
+3. El backend ya está configurado para usar esta tabla, solo necesitas configurar tus credenciales en el archivo `.env`.
+
+## Características del Template
+
+- **Renderizado Dinámico**: Usa `zrenderer` para generar sprites de RO sobre la marcha.
+- **Movimiento 3D**: Lógica de movimiento en rejilla (N, S, E, W) con animaciones de caminata automáticas.
+- **Sincronización**: Guarda la posición del personaje en la base de datos automáticamente al moverlo.
+- **Personalización**: Interfaz para cambiar de clase, género y estilo de cabeza en tiempo real.
 
 ## Créditos
 
