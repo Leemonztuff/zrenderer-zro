@@ -10,7 +10,7 @@ import { useThree } from '@react-three/fiber';
  * @param {Object} props.spriteParams - Parámetros para el renderizador (job, head, gender, etc.)
  * @param {number} props.scale - Escala para ajustar el sprite al mundo 3D.
  */
-const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, ...props }) => {
+const ROSpriteBillboard = React.memo(({ baseUrl, accessToken, spriteParams, scale = 0.02, ...props }) => {
     const [texture, setTexture] = useState(null);
     const { scene } = useThree();
 
@@ -45,7 +45,7 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-accesstoken': accessToken
+                        ...(accessToken && { 'x-accesstoken': accessToken })
                     },
                     body: JSON.stringify(params)
                 });
@@ -62,7 +62,10 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                         tex.minFilter = THREE.NearestFilter;
                         tex.magFilter = THREE.NearestFilter;
                         tex.needsUpdate = true;
-                        setTexture(tex);
+                        setTexture(prevTex => {
+                            if (prevTex) prevTex.dispose();
+                            return tex;
+                        });
                     } else {
                         tex.dispose();
                     }
@@ -94,6 +97,6 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
             />
         </sprite>
     );
-};
+});
 
 export default ROSpriteBillboard;
