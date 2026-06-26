@@ -18,3 +18,9 @@ bin/
 zrenderer.conf
 output/
 accesstokens.conf
+
+**/node_modules/
+**/dist/
+**/*.log
+**/.env
+**/package-lock.json
