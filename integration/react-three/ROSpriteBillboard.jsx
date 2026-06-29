@@ -10,23 +10,13 @@ import { useThree } from '@react-three/fiber';
  * @param {Object} props.spriteParams - Parámetros para el renderizador (job, head, gender, etc.)
  * @param {number} props.scale - Escala para ajustar el sprite al mundo 3D.
  */
-const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, ...props }) => {
+const ROSpriteBillboard = React.memo(({ baseUrl, accessToken, spriteParams, scale = 0.02, ...props }) => {
     const [texture, setTexture] = useState(null);
-    const { scene } = useThree();
 
     // Re-calculamos la URL cada vez que cambien los parámetros del sprite
     const renderUrl = useMemo(() => {
         return `${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}/render?downloadimage=true`;
     }, [baseUrl]);
-
-    // Manejo de limpieza de textura para evitar fugas de memoria en la GPU
-    useEffect(() => {
-        return () => {
-            if (texture) {
-                texture.dispose();
-            }
-        };
-    }, [texture]);
 
     useEffect(() => {
         let isMounted = true;
@@ -40,19 +30,26 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                     job: Array.isArray(spriteParams.job) ? spriteParams.job.map(String) : [String(spriteParams.job)]
                 };
 
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (accessToken) {
+                    headers['x-accesstoken'] = accessToken;
+                }
+
                 // Hacer el POST para obtener la imagen como blob
                 const response = await fetch(renderUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-accesstoken': accessToken
-                    },
+                    headers,
                     body: JSON.stringify(params)
                 });
 
                 if (!response.ok) return;
 
                 const blob = await response.blob();
+
+                if (!isMounted) return;
+
                 objectUrl = URL.createObjectURL(blob);
 
                 const loader = new THREE.TextureLoader();
@@ -62,7 +59,11 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
                         tex.minFilter = THREE.NearestFilter;
                         tex.magFilter = THREE.NearestFilter;
                         tex.needsUpdate = true;
-                        setTexture(tex);
+
+                        setTexture(prevTexture => {
+                            if (prevTexture) prevTexture.dispose();
+                            return tex;
+                        });
                     } else {
                         tex.dispose();
                     }
@@ -83,6 +84,15 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
         };
     }, [renderUrl, accessToken, JSON.stringify(spriteParams)]);
 
+    // Limpieza al desmontar el componente
+    useEffect(() => {
+        return () => {
+            if (texture) {
+                texture.dispose();
+            }
+        };
+    }, [texture]);
+
     if (!texture) return null;
 
     return (
@@ -94,6 +104,6 @@ const ROSpriteBillboard = ({ baseUrl, accessToken, spriteParams, scale = 0.02, .
             />
         </sprite>
     );
-};
+});
 
 export default ROSpriteBillboard;
