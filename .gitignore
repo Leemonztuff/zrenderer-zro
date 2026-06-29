@@ -18,3 +18,10 @@ bin/
 zrenderer.conf
 output/
 accesstokens.conf
+
+# Javascript dependencies and build artifacts
+**/node_modules/
+**/dist/
+.env
+*.log
+package-lock.json
