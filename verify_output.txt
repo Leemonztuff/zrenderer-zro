@@ -1,0 +1,7 @@
+Servidor frontend no responde a tiempo, ignorando para screenshot manual
+Error en verificación: Locator expected to be visible
+Actual value: None
+Error: element(s) not found
+Call log:
+  - Expect "to_be_visible" with timeout 5000ms
+  - waiting for get_by_role("button", name="↑")
